@@ -58,7 +58,7 @@ pub mod insert {
     use crate::models::IdMovie;
     use crate::schema::*;
 
-    #[derive(Insertable)]
+    #[derive(Debug, Insertable)]
     #[table_name = "artists"]
     pub struct NewArtist<'a> {
         pub last_name: &'a str,
@@ -66,19 +66,19 @@ pub mod insert {
         pub birth_date: Option<i32>,
     }
 
-    #[derive(Insertable)]
+    #[derive(Debug, Insertable)]
     #[table_name = "countries"]
     pub struct NewCountry<'a> {
         pub country: &'a str,
     }
 
-    #[derive(Insertable)]
+    #[derive(Debug, Insertable)]
     #[table_name = "genres"]
     pub struct NewGenre<'a> {
         pub genre: &'a str,
     }
 
-    #[derive(Insertable)]
+    #[derive(Debug, Insertable)]
     #[table_name = "movies"]
     pub struct NewMovie<'a> {
         pub title: &'a str,
@@ -89,7 +89,7 @@ pub mod insert {
         pub id_director: IdArtist,
     }
 
-    #[derive(Insertable)]
+    #[derive(Debug, Insertable)]
     #[table_name = "roles"]
     pub struct NewRole<'a> {
         pub id_movie: IdMovie,
@@ -98,7 +98,14 @@ pub mod insert {
     }
 }
 
-#[derive(Queryable)]
+#[derive(Debug, Queryable)]
+pub struct Role {
+    pub id_movie: IdMovie,
+    pub id_artist: IdArtist,
+    pub role: Option<String>,
+}
+
+#[derive(Debug, Queryable)]
 pub struct Artist {
     pub id_artist: IdArtist,
     pub last_name: String,
@@ -106,25 +113,25 @@ pub struct Artist {
     pub birth_date: Option<i32>,
 }
 
-#[derive(Queryable)]
+#[derive(Debug, Queryable)]
 pub struct Country {
     pub id_country: IdCountry,
     pub country: String,
 }
 
-#[derive(Queryable)]
+#[derive(Debug, Queryable)]
 pub struct Genre {
     pub id_genre: IdGenre,
     pub genre: String,
 }
 
-#[derive(Queryable)]
+#[derive(Debug, Queryable)]
 pub struct Movie {
     pub id_movie: IdMovie,
     pub title: String,
     pub year: i32,
     pub summary: Option<String>,
-    pub genre: Genre,
-    pub country: Country,
-    pub director: Artist,
+    pub id_genre: IdGenre,
+    pub id_country: IdCountry,
+    pub id_director: IdArtist,
 }
