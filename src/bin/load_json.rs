@@ -1,12 +1,12 @@
 use diesel::prelude::*;
 use movies_db::establish_connection;
 use movies_db::import::*;
+use movies_db::models::IdArtist;
+use movies_db::models::IdCountry;
+use movies_db::models::IdGenre;
+use movies_db::models::IdMovie;
 use std::collections::HashMap;
 use std::fs::File;
-use movies_db::models::IdGenre;
-use movies_db::models::IdCountry;
-use movies_db::models::IdArtist;
-use movies_db::models::IdMovie;
 
 type Result<T> = std::result::Result<T, Box<std::error::Error>>;
 
@@ -148,7 +148,12 @@ fn create_movie(
         .expect("Error retrieving new movie")
 }
 
-fn create_role(id_movie: IdMovie, id_artist: IdArtist, role: Option<&str>, conn: &SqliteConnection) {
+fn create_role(
+    id_movie: IdMovie,
+    id_artist: IdArtist,
+    role: Option<&str>,
+    conn: &SqliteConnection,
+) {
     use movies_db::models::insert::NewRole;
     use movies_db::schema::roles::table;
 

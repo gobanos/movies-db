@@ -1,8 +1,8 @@
-use diesel::sql_types::Integer;
-use diesel::serialize::{self as ser, ToSql, Output};
-use diesel::deserialize::{self as de, FromSql};
-use diesel::sqlite::Sqlite;
 use diesel::backend::Backend;
+use diesel::deserialize::{self as de, FromSql};
+use diesel::serialize::{self as ser, Output, ToSql};
+use diesel::sql_types::Integer;
+use diesel::sqlite::Sqlite;
 use std::io::Write;
 
 macro_rules! id {
@@ -20,7 +20,7 @@ macro_rules! id {
         // SQLITE
         impl FromSql<Integer, Sqlite> for $name {
             fn from_sql(bytes: Option<&<Sqlite as Backend>::RawValue>) -> de::Result<Self> {
-                <i32 as FromSql<Integer, Sqlite>>::from_sql(bytes).map(|id| $name(id))
+                <i32 as FromSql<Integer, Sqlite>>::from_sql(bytes).map($name)
             }
         }
 
@@ -39,11 +39,11 @@ id! { IdGenre }
 id! { IdMovie }
 
 pub mod insert {
-    use crate::schema::*;
-    use crate::models::IdGenre;
-    use crate::models::IdCountry;
     use crate::models::IdArtist;
+    use crate::models::IdCountry;
+    use crate::models::IdGenre;
     use crate::models::IdMovie;
+    use crate::schema::*;
 
     #[derive(Insertable)]
     #[table_name = "artists"]
