@@ -1,33 +1,46 @@
-use diesel::backend::Backend;
-use diesel::deserialize::{self as de, FromSql};
-use diesel::serialize::{self as ser, Output, ToSql};
-use diesel::sql_types::Integer;
-use diesel::sqlite::Sqlite;
-use std::io::Write;
-
 macro_rules! id {
     ($name:ident) => {
         #[derive(Debug, Copy, Clone, AsExpression, FromSqlRow)]
-        #[sql_type = "Integer"]
+        #[sql_type = "diesel::sql_types::Integer"]
         pub struct $name(i32);
 
-        impl<DB: Backend> ToSql<Integer, DB> for $name {
-            fn to_sql<W: Write>(&self, out: &mut Output<W, DB>) -> ser::Result {
-                <i32 as ToSql<Integer, DB>>::to_sql(&self.0, out)
+        impl<DB: diesel::backend::Backend> diesel::serialize::ToSql<diesel::sql_types::Integer, DB>
+            for $name
+        {
+            fn to_sql<W: std::io::Write>(
+                &self,
+                out: &mut diesel::serialize::Output<W, DB>,
+            ) -> diesel::serialize::Result {
+                <i32 as diesel::serialize::ToSql<diesel::sql_types::Integer, DB>>::to_sql(
+                    &self.0, out,
+                )
             }
         }
 
         // SQLITE
-        impl FromSql<Integer, Sqlite> for $name {
-            fn from_sql(bytes: Option<&<Sqlite as Backend>::RawValue>) -> de::Result<Self> {
-                <i32 as FromSql<Integer, Sqlite>>::from_sql(bytes).map($name)
+        impl diesel::deserialize::FromSql<diesel::sql_types::Integer, diesel::sqlite::Sqlite>
+            for $name
+        {
+            fn from_sql(
+                bytes: Option<&<diesel::sqlite::Sqlite as diesel::backend::Backend>::RawValue>,
+            ) -> diesel::deserialize::Result<Self> {
+                <i32 as diesel::deserialize::FromSql<
+                    diesel::sql_types::Integer,
+                    diesel::sqlite::Sqlite,
+                >>::from_sql(bytes)
+                .map($name)
             }
         }
 
         // OTHER BACKENDS
-        // impl<DB: Backend<RawValue = [u8]>> FromSql<Integer, DB> for $name {
-        //     fn from_sql(bytes: Option<&[u8]>) -> de::Result<Self> {
-        //         <i32 as FromSql<Integer, DB>>::from_sql(bytes).map($name)
+        // impl<DB: diesel::backend::Backend<RawValue = [u8]>>
+        //     diesel::deserialize::FromSql<diesel::sql_types::Integer, DB> for $name
+        // {
+        //     fn from_sql(bytes: Option<&[u8]>) -> diesel::deserialize::Result<Self> {
+        //         <i32 as diesel::deserialize::FromSql<diesel::sql_types::Integer, DB>>::from_sql(
+        //             bytes,
+        //         )
+        //         .map($name)
         //     }
         // }
     };
