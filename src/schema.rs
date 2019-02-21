@@ -47,4 +47,10 @@ joinable!(movies -> genres (id_genre));
 joinable!(roles -> artists (id_artist));
 joinable!(roles -> movies (id_movie));
 
-allow_tables_to_appear_in_same_query!(artists, countries, genres, movies, roles,);
+allow_tables_to_appear_in_same_query!(
+    artists,
+    countries,
+    genres,
+    movies,
+    roles,
+);
