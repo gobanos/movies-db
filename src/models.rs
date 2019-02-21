@@ -27,7 +27,7 @@ macro_rules! id {
         // OTHER BACKENDS
         // impl<DB: Backend<RawValue = [u8]>> FromSql<Integer, DB> for $name {
         //     fn from_sql(bytes: Option<&[u8]>) -> de::Result<Self> {
-        //         <i32 as FromSql<Integer, DB>>::from_sql(bytes).map(|id| $name(id))
+        //         <i32 as FromSql<Integer, DB>>::from_sql(bytes).map($name)
         //     }
         // }
     };
